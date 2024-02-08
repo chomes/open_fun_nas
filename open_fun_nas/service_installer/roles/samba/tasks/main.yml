@@ -1,0 +1,26 @@
+---
+- name: Install samba
+  ansible.builtin.apt:
+    name: samba
+    state: present
+    update_cache: yes
+  retries: 5
+- name: Deploy samba config
+  ansible.builtin.template:
+    src: smb.conf.j2
+    dest: /etc/samba/smb.conf
+    backup: true
+    owner: root
+    group: root
+    mode: 0644
+  register: samba_config
+- name: Enable samba on firewall
+  community.general.ufw:
+    rule: allow
+    name: Samba
+- name: Restart samba
+  ansible.builtin.systemd:
+    state: restarted
+    name: smbd
+    enabled: true
+  when: samba_config is changed
