@@ -1,0 +1,11 @@
+---
+base_packages:
+  - docker.io
+  - docker-compose
+  - python3-docker
+  - unattended-upgrades
+  - zfs-zed
+  - zfsutils-linux
+  - zfs-fuse
+  - screen
+  - vim

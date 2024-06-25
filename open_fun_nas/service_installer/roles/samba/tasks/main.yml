@@ -3,7 +3,7 @@
   ansible.builtin.apt:
     name: samba
     state: present
-    update_cache: yes
+    update_cache: true
   retries: 5
 - name: Deploy samba config
   ansible.builtin.template:
@@ -12,15 +12,9 @@
     backup: true
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   register: samba_config
-- name: Enable samba on firewall
-  community.general.ufw:
-    rule: allow
-    name: Samba
-- name: Restart samba
-  ansible.builtin.systemd:
-    state: restarted
-    name: smbd
-    enabled: true
-  when: samba_config is changed
+  when: deploy_samba_config
+  notify:
+    - "samba : Enable samba on firewall"
+    - "samba : Restart samba"

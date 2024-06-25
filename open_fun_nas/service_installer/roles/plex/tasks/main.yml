@@ -1,24 +1,18 @@
 ---
-- name: Install docker-compose
-  ansible.builtin.apt:
-    name: docker-compose
-    update_cache: yes
-    state: present
-  retries: 5
 - name: Create plex folder for docker file
   ansible.builtin.file:
     path: /opt/services/plex_media
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
     state: directory
 - name: Deploy plex compose file
   ansible.builtin.template:
-    src: plex_docker.j2
+    src: plex.j2
     dest: /opt/services/plex_media/docker-compose.yml
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
 - name: Install plex docker
   community.general.docker_compose:
     build: true

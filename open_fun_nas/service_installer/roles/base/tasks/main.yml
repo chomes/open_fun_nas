@@ -1,0 +1,50 @@
+---
+- name: Install base packages
+  ansible.builtin.apt:
+    name: "{{ base_packages }}"
+    update_cache: true
+    state: present
+  retries: 5
+- name: Enable unattended-upgrades
+  ansible.builtin.template:
+    src: auto-upgrades.j2
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    owner: root
+    group: root
+    mode: "0644"
+- name: Deploy unattended-upgrades config
+  ansible.builtin.template:
+    src: unattended-upgrades.j2
+    dest: /etc/apt/apt.conf.d/50unattended-upgrades
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - "base : Reconfigure unattended-upgrades"
+- name: Create docker services folder
+  ansible.builtin.file:
+    path: /opt/services/
+    owner: root
+    group: root
+    mode: "0755"
+    state: directory
+- name: Create watch tower service
+  ansible.builtin.file:
+    path: /opt/services/watch_tower
+    owner: root
+    group: root
+    mode: "0755"
+    state: directory
+- name: Deploy watch tower template
+  ansible.builtin.template:
+    src: watch_tower.j2
+    dest: /opt/services/watch_tower/docker-compose.yml
+    owner: root
+    group: root
+    mode: "0644"
+- name: Deploy watch tower container
+  community.general.docker_compose:
+    build: true
+    state: present
+    project_src: /opt/services/watch_tower
+    pull: true

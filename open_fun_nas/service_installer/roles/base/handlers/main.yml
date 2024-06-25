@@ -1,0 +1,5 @@
+---
+- name: Reconfigure unattended-upgrades
+  ansible.builtin.command: dpkg-reconfigure unattended-upgrades
+  register: reconfigure_unattended_upgrades
+  changed_when: reconfigure_unattended_upgrades.rc == 0

@@ -16,7 +16,7 @@ setuptools.setup(
     description="Python/Ansible based NAS server management tool",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/chomes/yt-web-ui",
+    url="https://github.com/chomes/open_fun_nas",
     packages=setuptools.find_packages(exclude=["test*"]),
     install_requires=[
 

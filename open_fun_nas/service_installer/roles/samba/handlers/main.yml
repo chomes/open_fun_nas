@@ -1,0 +1,11 @@
+---
+- name: Enable samba on firewall
+  community.general.ufw:
+    rule: allow
+    name: Samba
+- name: Restart samba
+  ansible.builtin.systemd:
+    state: restarted
+    name: smbd
+    enabled: true
+    backup: true
