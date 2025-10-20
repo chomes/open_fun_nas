@@ -1,0 +1,13 @@
+---
+nextcloud_docker_deployment_dir:
+nextcloud_docker_deployment_dir_owner: root
+nextcloud_docker_deployment_dir_group: root
+nextcloud_mysql_root_password:
+nextcloud_db_path: "{{ nextcloud_docker_deployment_dir }}/db"
+nextcloud_mysql_db_password:
+nextcloud_mysql_username:
+nextcloud_trusted_domains:
+nextcloud_web_path: "{{ nextcloud_docker_deployment_dir }}/web"
+nextcloud_admin_username:
+nextcloud_admin_password:
+nextcloud_phone_region:

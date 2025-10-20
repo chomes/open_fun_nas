@@ -1,0 +1,35 @@
+---
+- name: Creating nextcloud docker compose dir if it doesn't exist
+  ansible.builtin.file:
+    path: "{{ nextcloud_docker_deployment_dir }}"
+    state: directory
+    owner: "{{ nextcloud_docker_deployment_dir_owner }}"
+    group: "{{ nextcloud_docker_deployment_dir_group }}"
+    mode: "0755"
+- name: Creating database dir for nextcloud
+  ansible.builtin.file:
+    path: "{{ nextcloud_db_path }}"
+    state: directory
+    owner: "{{ nextcloud_docker_deployment_dir_owner }}"
+    group: "{{ nextcloud_docker_deployment_dir_group }}"
+    mode: "0755"
+- name: Creating web dir for nextcloud
+  ansible.builtin.file:
+    path: "{{ nextcloud_web_path }}"
+    state: directory
+    owner: "{{ nextcloud_docker_deployment_dir_owner }}"
+    group: "{{ nextcloud_docker_deployment_dir_group }}"
+    mode: "0755"
+- name: Deploying nextcloud docker_compose
+  ansible.builtin.template:
+    src: nextcloud_server.j2
+    dest: "{{ nextcloud_docker_deployment_dir }}/docker-compose.yml"
+    owner: "{{ nextcloud_docker_deployment_dir_owner }}"
+    group: "{{ nextcloud_docker_deployment_dir_group }}"
+    mode: "0755"
+- name: Install nextcloud server
+  community.general.docker_compose:
+    build: true
+    state: present
+    project_src: "{{ nextcloud_docker_deployment_dir }}"
+    pull: true
