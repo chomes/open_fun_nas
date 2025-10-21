@@ -10,4 +10,9 @@ nextcloud_trusted_domains:
 nextcloud_web_path: "{{ nextcloud_docker_deployment_dir }}/web"
 nextcloud_admin_username:
 nextcloud_admin_password:
-nextcloud_phone_region:
+nextcloud_smtp_host:
+nextcloud_smtp_security_type: ssl
+nextcloud_smtp_port: 465
+nextcloud_smtp_username:
+nextcloud_smtp_password:
+nextcloud_mail_address:
