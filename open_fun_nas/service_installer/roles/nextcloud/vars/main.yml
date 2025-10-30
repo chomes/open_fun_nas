@@ -16,3 +16,8 @@ nextcloud_smtp_port: 465
 nextcloud_smtp_username:
 nextcloud_smtp_password:
 nextcloud_mail_address:
+nextcloud_onlyoffice_deployment_dir:
+nextcloud_onlyoffice_jwt_secret:
+nextcloud_onlyoffice_log_folder:
+nextcloud_onlyoffice_data_folder:
+nextcloud_onlyoffice_docserver_enable: true
