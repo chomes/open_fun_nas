@@ -26,7 +26,7 @@ services:
     container_name: nextcloud-compose
     restart: always
     ports:
-      - 12000:80
+      - 8000:80
     depends_on:
       - redis
       - db
@@ -40,5 +40,10 @@ services:
       - NEXTCLOUD_TRUSTED_DOMAINS={{ nextcloud_trusted_domains }}
       - NEXTCLOUD_ADMIN_USER={{ nextcloud_admin_username }}
       - NEXTCLOUD_ADMIN_PASSWORD={{ nextcloud_admin_password }}
-      - NEXTCLOUD_DEFAULT_PHONE_REGION={{ nextcloud_phone_region }}
+      - SMTP_HOST={{ nextcloud_smtp_host }}
+      - SMTP_SECURE={{ nextcloud_smtp_security_type }}
+      - SMTP_PORT={{ nextcloud_smtp_port }}
+      - SMTP_NAME={{ nextcloud_smtp_username }}
+      - SMTP_PASSWORD={{ nextcloud_smtp_password }}
+      - MAIL_FROM_ADDRESS={{ nextcloud_mail_address }}
       
