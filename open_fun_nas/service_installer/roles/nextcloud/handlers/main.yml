@@ -1,0 +1,14 @@
+---
+- name: Restart nginx
+  ansible.builtin.systemd:
+    name: nginx
+    state: restarted
+- name: Force https on nextcloud
+  ansible.builtin.command: docker exec nextcloud-compose php occ config:system:set overwriteprotocol --value="https"
+- name: Configure nextcloud to use proxy server
+  ansible.builtin.command: docker exec nextcloud-compose php occ config:system:set trusted_proxies 0 --value="{{ nextcloud_local_ip_address }}"
+- name: Restart nextcloud container
+  community.docker.docker_container:
+    name: nextcloud-compose
+    restart: true
+    state: started
