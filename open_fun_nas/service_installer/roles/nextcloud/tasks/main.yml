@@ -81,3 +81,29 @@
     state: present
     project_src: "{{ nextcloud_docker_deployment_dir }}"
     pull: true
+- name: Install nginx for proxy server
+  ansible.builtin.apt:
+    name: nginx
+    update_cache: true
+  when: nextcloud_proxy_server_deployment
+- name: Deploy proxy server config for server
+  ansible.builtin.template:
+    src: proxy_server_setup.j2
+    dest: /etc/nginx/sites-enabled/"{{ nextcloud_fqdn }}"
+    owner: root
+    group: root
+    mode: "0644"
+  when: nextcloud_proxy_server_deployment
+- name: Create soft link for new site
+  ansible.builtin.file:
+    src: /etc/nginx/sites-enabled/"{{ nextcloud_fqdn }}"
+    dest: /etc/nginx/sites-available/"{{ nextcloud_fqdn }}"
+    state: link
+  when: nextcloud_proxy_server_deployment
+  notify:
+    - "Restart nginx"
+    - "Force https on nextcloud"
+    - "Configure nextcloud to use proxy server"
+    - "Restart nextcloud container"
+- name: Force handler flush
+  ansible.builtin.meta:
