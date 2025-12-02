@@ -18,11 +18,11 @@ The SMTP env vars, may or may not work, I have personally found issues with doin
 
 We recommend setting a trusted domain to something other then the hostname of the servers local 127.0.0.1.  This is due to onlyoffice.  You should use an ip address of your LAN and or the public ip address of the server.
 
-## Onlyoffice
+## Collabora docs
 
-We deploy the onlyoffice doc server as a container, it is fine to have it on the same machine, but nextcloud and onlyoffice do not play well if the hostname points to 127.0.0.1.  Which is why trusted domains should point to a LAN address instead.
+I had issues with using onlyoffice with https so I've pivoted to collabora, after testing this on my own nas server I have got this functioning as expected.  Using the `nextcloud_collabora_docserver_enable` which is true by default will install and configure it.
 
-Only office is deployed by default but set the `nextcloud_onlyoffice_docserver_enable` to false if you don't want it installed.
+Some important caveates when using this:
 
 ### After install
 
