@@ -27,54 +27,10 @@
     owner: "{{ nextcloud_docker_deployment_dir_owner }}"
     group: "{{ nextcloud_docker_deployment_dir_group }}"
     mode: "0755"
-- name: Creating onlyoffice deployment dir if it doesn't exist
-  ansible.builtin.file:
-    path: "{{ nextcloud_onlyoffice_deployment_dir }}"
-    state: directory
-    owner: "{{ nextcloud_docker_deployment_dir_owner }}"
-    group: "{{ nextcloud_docker_deployment_dir_group }}"
-    mode: "0755"
-  when: nextcloud_onlyoffice_docserver_enable
-- name: Creating onlyoffice log folder
-  ansible.builtin.file:
-    path: "{{ nextcloud_onlyoffice_log_folder }}"
-    state: directory
-    owner: "{{ nextcloud_docker_deployment_dir_owner }}"
-    group: "{{ nextcloud_docker_deployment_dir_group }}"
-    mode: "0755"
-  when: nextcloud_onlyoffice_docserver_enable
-- name: Creating onlyoffice data folder
-  ansible.builtin.file:
-    path: "{{ nextcloud_onlyoffice_data_folder }}"
-    state: directory
-    owner: "{{ nextcloud_docker_deployment_dir_owner }}"
-    group: "{{ nextcloud_docker_deployment_dir_group }}"
-    mode: "0755"
-  when: nextcloud_onlyoffice_docserver_enable
-- name: Deploying onlyoffice compose file
-  ansible.builtin.template:
-    src: onlyoffice_server.j2
-    dest: "{{ nextcloud_onlyoffice_deployment_dir }}/docker-compose.yml"
-    owner: "{{ nextcloud_docker_deployment_dir_owner }}"
-    group: "{{ nextcloud_docker_deployment_dir_group }}"
-    mode: "0755"
-  when: nextcloud_onlyoffice_docserver_enable
 - name: Stopping nextcloud container if it exists
   community.general.docker_compose:
     state: absent
     project_src: "{{ nextcloud_onlyoffice_deployment_dir }}"
-  when: nextcloud_onlyoffice_docserver_enable
-- name: Install nextcloud server
-  community.general.docker_compose:
-    build: true
-    state: present
-    project_src: "{{ nextcloud_onlyoffice_deployment_dir }}"
-    pull: true
-  when: nextcloud_onlyoffice_docserver_enable
-- name: Stopping nextcloud container if it exists
-  community.general.docker_compose:
-    state: absent
-    project_src: "{{ nextcloud_docker_deployment_dir }}"
 - name: Install nextcloud server
   community.general.docker_compose:
     build: true
@@ -89,17 +45,58 @@
 - name: Deploy proxy server config for server
   ansible.builtin.template:
     src: proxy_server_setup.j2
-    dest: /etc/nginx/sites-enabled/"{{ nextcloud_fqdn }}"
+    dest: /etc/nginx/sites-available/"{{ nextcloud_fqdn }}"
     owner: root
     group: root
     mode: "0644"
   when: nextcloud_proxy_server_deployment
 - name: Create soft link for new site
   ansible.builtin.file:
-    src: /etc/nginx/sites-enabled/"{{ nextcloud_fqdn }}"
-    dest: /etc/nginx/sites-available/"{{ nextcloud_fqdn }}"
+    src: /etc/nginx/sites-available/"{{ nextcloud_fqdn }}"
+    dest: /etc/nginx/sites-enabled/"{{ nextcloud_fqdn }}"
     state: link
   when: nextcloud_proxy_server_deployment
+  notify:
+  - "Restart nginx"
+  - "Force https on nextcloud"
+  - "Configure nextcloud to use proxy server"
+  - "Restart nextcloud container"
+- name: Create collabora docker compose directory
+  ansible.builtin.file:
+    src: "{{ nextcloud_docker_deployment_dir }}/collabora"
+    state: directory
+    owner: "{{ nextcloud_docker_deployment_dir_owner }}"
+    group: "{{ nextcloud_docker_deployment_dir_group }}"
+    mode: "0755"
+  when: nextcloud_collabora_docserver_enable
+- name: Deploy collabora docker compose file
+  ansible.builtin.template:
+    src: collabora_server.j2
+    dest: "{{ nextcloud_docker_deployment_dir }}/collabora/docker_compose.yml"
+    owner: "{{ nextcloud_docker_deployment_dir_owner }}"
+    group: "{{ nextcloud_docker_deployment_dir_group }}"
+    mode: "0755"
+  when: nextcloud_collabora_docserver_enable
+- name: Deploy nginx proxy config for collabora
+  ansible.builtin.template:
+    src: collabora_proxy_server_setup.j2
+    dest: /etc/nginx/sites-available/"{{ nextcloud_collabora_fqdn }}"
+    owner: root
+    group: root
+    mode: "0644"
+  when: nextcloud_collabora_docserver_enable and nextcloud_proxy_server_deployment
+- name: Create soft link for collabora proxy
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/"{{ nextcloud_collabora_fqdn }}"
+    dest: /etc/nginx/sites-enabled/"{{ nextcloud_collabora_fqdn }}"
+    state: link
+  when: nextcloud_collabora_docserver_enable and nextcloud_proxy_server_deployment
+- name: Install collabora server
+  community.general.docker_compose:
+    build: true
+    state: present
+    project_src: "{{ nextcloud_docker_deployment_dir }}/collabora"
+    pull: true
   notify:
     - "Restart nginx"
     - "Force https on nextcloud"

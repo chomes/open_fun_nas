@@ -1,0 +1,13 @@
+services:
+  collabora:
+    image: collabora/code:latest
+    container_name: collabora
+    environment:
+      - aliasgroup1=https://{{ nextcloud_fqdn }}:443,https://{{ nextcloud_fqdn | replace(".", "\\." }}:443 
+      - username=admin
+      - password={{ nextcloud_collabora_admin_password }} 
+      - dictionaries=en_GB en_US
+      - extra_params=--o:ssl.enable=false --o:ssl.termination=true --o:logging.level=warning
+    ports:
+      - "9980:9980"
+    restart: always

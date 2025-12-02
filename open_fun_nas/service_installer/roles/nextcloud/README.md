@@ -18,29 +18,12 @@ The SMTP env vars, may or may not work, I have personally found issues with doin
 
 We recommend setting a trusted domain to something other then the hostname of the servers local 127.0.0.1.  This is due to onlyoffice.  You should use an ip address of your LAN and or the public ip address of the server.
 
-## Onlyoffice
+## Collabora docs
 
-We deploy the onlyoffice doc server as a container, it is fine to have it on the same machine, but nextcloud and onlyoffice do not play well if the hostname points to 127.0.0.1.  Which is why trusted domains should point to a LAN address instead.
+I had issues with using onlyoffice with https so I've pivoted to collabora, after testing this on my own nas server I have got this functioning as expected.  Using the `nextcloud_collabora_docserver_enable` which is true by default will install and configure it.
 
-Only office is deployed by default but set the `nextcloud_onlyoffice_docserver_enable` to false if you don't want it installed.
+Some important caveates when using this:
 
-### After install
-
-Once you've installed the server go to the web interface of the doc server and enable the admin panel and set it to enable on boot.  **DO NOT ENABLE THE TEST DOC SERVER THIS IS NOT NEEDED**.
-
-Please make sure you login to the doc server on a hostname that does not direct to local link address (127.0.0.1) as testing the doc server will not work.
-
-Use `docker logs onlyoffice-server` to get the token for the admin panel and go to it and create a password.
-
-* Enable local ips to connect and public ip addresses
-* Configure other things you want
-
-### Nextcloud integration
-
-* In nextcloud install the only office app
-* Go to Administration Settings > ONLYOFFICE
-* Set the following settings:
-  * only office doc server address - Set it as a LAN IP:8080
-  * secret key - This is the jwt token you created
-  * Advance settings > Authorization Header - AuthorizationJwt
-* Click save, it should be successful and you can now work on docs!
+* It is expected that you have certbot or ssl certificates ready to use
+* We will deploy the proxy server configuration for you, you just provide the information
+* Your client machine will need to resolve the DNS of the office server for this to work along with your server
