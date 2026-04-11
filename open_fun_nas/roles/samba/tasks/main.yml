@@ -14,7 +14,6 @@
     group: root
     mode: "0644"
   register: samba_config
-  when: deploy_samba_config
   notify:
     - "samba : Enable samba on firewall"
     - "samba : Restart samba"

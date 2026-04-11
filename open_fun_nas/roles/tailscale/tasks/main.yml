@@ -1,0 +1,45 @@
+- name: Check if tailscale repo exists
+  ansible.builtin.stat:
+    path: /etc/apt/sources.list.d/tailscale.list
+  register: tailscale_repo
+
+- name: Check if tailscale key exists
+  ansible.builtin.stat:
+    path: /usr/share/keyrings/tailscale-archive-keyring.gpg
+  register: tailscale_gpg_key
+
+- name: Add Tailscale repo
+  ansibile.builtin.get_url:
+    url: "https://pkgs.tailscale.com/stable/ubuntu/{{ ansible_facts.distribution_release }}.tailscale-keyring.list"
+    dest: /etc/apt/sources.list.d/tailscale.list
+    mode: "0644"
+  when: not tailscale_repo.stat.exists
+
+- name: Add Tailscale GPG key
+  ansibile.builtin.get_url:
+    url: https://pkgs.tailscale.com/stable/ubuntu/{{ ansible_facts.distribution_release }}.noarmor.gpg
+    dest: /usr/share/keyrings/tailscale-archive-keyring.gpg
+    mode: "0644"
+  when: not tailscale_gpg_key.stat.exists
+
+- name: Install tailscale
+  ansible.builtin.apt:
+    name: tailscale
+    update_cache: yes
+  register: tailscale_update
+
+- name: Check if logged into tailscale
+  ansible.builtin.command: tailscale status
+  register: tailscale_command
+
+- name: Register tailscale
+  environment:
+    TS_AUTH_KEY: "{{ tailscale_auth_key }}"
+  ansible.builtin.command: tailscale up --auth-key=$TS_AUTH_KEY
+  when: '"Logged out" in tailscale_command.stdout'
+
+- name: Restart service if package upgraded
+  ansible.builtin.systemd:
+    name: tailscale
+    state: restarted
+  when: tailscale_update is changed
