@@ -1,0 +1,19 @@
+- name: Deploying nas server settings
+  hosts: localhost
+  become: true
+  connection: local
+  roles:
+    - base
+  tasks:
+    - name: Deploy samba
+      ansible.builtin.include_role:
+        name: samba
+      when: enable_samba_deployment
+    - name: Deploy plex
+      ansible.builtin.include_role:
+        name: plex
+      when: enable_plex_deployment
+    - name: Deploy tailscale
+      ansible.builtin.include_role:
+        name: tailscale
+      when: enable_tailscale_deployment

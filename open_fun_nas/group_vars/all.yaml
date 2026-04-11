@@ -1,0 +1,4 @@
+enable_plex_deployment: false
+enable_samba_deployment: false
+enable_nextcloud_deployment: false
+enable_tailscale_deployment: false

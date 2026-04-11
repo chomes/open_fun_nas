@@ -27,16 +27,20 @@
     owner: "{{ nextcloud_docker_deployment_dir_owner }}"
     group: "{{ nextcloud_docker_deployment_dir_group }}"
     mode: "0755"
-- name: Stopping nextcloud container if it exists
-  community.general.docker_compose:
+  register: nextcloud_compose
+- name: Stop nextcloud service if compose file has changed
+  ansible.builtin.docker_compose:
     state: absent
-    project_src: "{{ nextcloud_onlyoffice_deployment_dir }}"
+    timeout: 60
+    project_src: "{{ nextcloud_docker_deployment_dir }}"
+  when: nextcloud_compose is changed
 - name: Install nextcloud server
   community.general.docker_compose:
     build: true
     state: present
     project_src: "{{ nextcloud_docker_deployment_dir }}"
     pull: true
+  when: nextcloud_compose is changed
 - name: Install nginx for proxy server
   ansible.builtin.apt:
     name: nginx
@@ -102,5 +106,6 @@
     - "Force https on nextcloud"
     - "Configure nextcloud to use proxy server"
     - "Restart nextcloud container"
+  when: nextcloud_collabora_docserver_enable
 - name: Force handler flush
-  ansible.builtin.meta:
+  ansible.builtin.meta: "flush_handlers"

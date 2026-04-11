@@ -1,8 +1,0 @@
-- name: Deploying nas server settings
-  hosts: localhost
-  become: true
-  connection: local
-  roles:
-    - base
-    - samba
-    - plex

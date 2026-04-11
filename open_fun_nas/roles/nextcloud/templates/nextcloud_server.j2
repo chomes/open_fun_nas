@@ -6,6 +6,7 @@ services:
     image: mariadb:lts
     container_name: nextcloud-compose-db
     restart: always
+    stop_grace_period: 60s
     command: --transaction-isolation=READ-COMMITTED
     volumes:
       - {{ nextcloud_db_path }}:/var/lib/mysql
@@ -23,6 +24,7 @@ services:
 
   app:
     image: nextcloud
+    stop_grace_period: 60s
     container_name: nextcloud-compose
     restart: always
     ports:
