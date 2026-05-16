@@ -1,0 +1,7 @@
+---
+time_zone: Europe/London
+render_group_number: 109
+video_group_number: 44
+storage_dir: PROVIDE_THIS
+media_dir: PROVIDE_THIS
+enable_gpu: false

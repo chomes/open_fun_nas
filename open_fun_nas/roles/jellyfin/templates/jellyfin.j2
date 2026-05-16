@@ -1,0 +1,22 @@
+---
+version: '2'
+services:
+  jellyfin:
+    container_name: jellyfin
+    image: jellyfin/jellyfin:latest
+    restart: unless-stopped
+    environment:
+      - TZ={{ time_zone }}
+    network_mode: host
+    volumes:
+      - {{ storage_dir }}/server/config:/config
+      - {{ storage_dir }}/server/cache:/cache
+      - {{ storage_dir }}/{{ media_dir }}:/media:ro
+      - {{ storage_dir }}/server/transcodes:/transcodes
+    {% if enable_gpu %}
+    devices:
+      - /dev/dri:/dev/dri
+    group_add:
+      - "{{ render_group_number }}"
+      - "{{ video_group_number }}"
+    {% endif %}

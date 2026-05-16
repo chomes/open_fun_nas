@@ -1,0 +1,21 @@
+---
+- name: Create jellyfin folder for docker file
+  ansible.builtin.file:
+    path: /opt/services/jellyfin
+    owner: root
+    group: root
+    mode: "0755"
+    state: directory
+- name: Deploy jellyfin compose file
+  ansible.builtin.template:
+    src: jellyfin.j2
+    dest: /opt/services/jellyfin/docker-compose.yml
+    owner: root
+    group: root
+    mode: "0755"
+- name: Install jellyfin docker
+  community.general.docker_compose:
+    build: true
+    state: present
+    project_src: /opt/services/jellyfin
+    pull: true

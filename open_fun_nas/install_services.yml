@@ -9,9 +9,9 @@
       ansible.builtin.include_role:
         name: samba
       when: enable_samba_deployment
-    - name: Deploy plex
+    - name: Deploy jellyfin
       ansible.builtin.include_role:
-        name: plex
+        name: jellyfin
       when: enable_plex_deployment
     - name: Deploy tailscale
       ansible.builtin.include_role:
