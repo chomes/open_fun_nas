@@ -1,13 +1,13 @@
 # open_fun_nas
-NAS server for fun and learning
 
+NAS server for fun and learning
 
 Open fun nas is a pet project that is designed to provide a web ui for managing your nas server.  We use our opinions on how we believe the system should be configured and deploy and manage it as expected.
 
 For phase 1, we aim to have the following set up:
 
 * samba
-* plex
+* jellyfin
 * lets encrypt
 * next cloud
 * immich
