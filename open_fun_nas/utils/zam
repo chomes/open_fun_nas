@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+
+# ZFS Admin Management, used to simplify managing zfs pools, extending storage
+# and listing information about the pools for access.  I mostly created this because
+# I always can't remember the commands and this will simplify using them and I can
+# always read this back when I want to.
+
+function error_exit() {
+    printf "Failed operation due to error %s\n" "$1"
+}
+
+function is_commands_available() {
+    for zfs_command in zfs zpool;
+    do
+        if ! command -v "$zfs_command" 2&>/dev/null;
+        then
+            error_exit "Failed to start operations as $zfs_command isn't available"
+        fi
+    done
+}
+
+function list_datasets() {
+    zfs list -H -o name
+}
+
+function get_quotas() {
+    local zfs_pool="$1"
+    local zfs_dataset="$2"
+    if [[ -z "$zfs_dataset" ]];
+    then
+        zfs get -H -o name,value,source quota "$zfs_pool" | awk '$2 != "none" && $2 != "-"'
+    else
+        zfs get -H -o name,value,source quota "$zfs_pool/$zfs_dataset"
+    fi
+}
+
+function is_quota_in_dataset() {
+    local zfs_pool="$1"
+    local zfs_dataset="$2"
+    local zfs_quota=$(zfs get -H -o value quota "$zfs_pool/$zfs_dataset")
+    if [[ "$zfs_quota" == "-" || -z "$zfs_quota" ]];
+    then
+        return 1
+    else
+        return 0
+    fi
+}
+
+function get_snapshots() {
+    zfs list -H -o name -t snapshot
+}
+
+function is_valid_zfs_pool() {
+    if zpool list -H -o name | grep -Fxq "$1" ;
+    then
+        printf "%s is a valid pool \n" "$1"
+    else
+        error_exit "$1 is an invalid pool, not proceeding with operation"
+    fi
+}
+
+function get_available_pool_imports() {
+    sudo zpool import
+}
+
+function import_pool() {
+    local pool_name="$1"
+    if [[ -z "$pool_name" ]];
+    then
+        printf "Importing all pools \n"
+        sudo zpool import -a
+    else
+        printf "Importing pool %s\n" "$pool_name"
+        sudo zpool import "$pool_name"
+    fi
+}
+
+function create_dataset() {
+    local zfs_pool="$1"
+    local zfs_dataset="$2"
+    
+    printf "Attempting to create dataset %s \n" "$zfs_dataset"
+    is_valid_zfs_pool "$zfs_pool"
+    sudo zfs create "$zfs_pool/$zfs_dataset"
+}
+
+function main() {
+    is_commands_available
+}
+
+main
