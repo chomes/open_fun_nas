@@ -1,0 +1,13 @@
+version: '3'
+services:
+  pinchflat:
+    container_name: pinchflat
+    image: ghcr.io/kieraneglin/pinchflat:latest
+    environment:
+      # Set the timezone to your local timezone
+      - TZ={{ time_zone }}
+    ports:
+      - '8945:8945'
+    volumes:
+      - {{ pinchflat_server_config_dir }}:/config
+      - {{ pinchflat_download_dir }}:/downloads

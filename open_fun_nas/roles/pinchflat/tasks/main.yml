@@ -1,0 +1,35 @@
+---
+- name: Create pinchflat config directory
+  ansible.builtin.file:
+    path: "{{ pinchflat_server_config_dir }}"
+    owner: root
+    group: root
+    mode: "0755"
+    state: directory
+- name: Create pinchflat media directory
+  ansible.builtin.file:
+    path: "{{ pinchflat_download_dir }}"
+    owner: root
+    group: root
+    mode: "0755"
+    state: directory
+- name: Deploy pinchflat docker directory
+  ansible.builtin.file:
+    path: /opt/services/pinchflat
+    owner: root
+    group: root
+    mode: "0755"
+    state: directory
+- name: Deploy pinchflat docker
+  ansible.builtin.template:
+    src: pinchflat.j2
+    dest: /opt/services/pinchflat/docker-compose.yml
+    owner: root
+    group: root
+    mode: "0755"
+- name: Install pinchflat docker
+  community.general.docker_compose:
+    build: true
+    state: present
+    project_src: /opt/services/pinchflat
+    pull: true

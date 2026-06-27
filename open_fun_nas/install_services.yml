@@ -17,3 +17,7 @@
       ansible.builtin.include_role:
         name: tailscale
       when: enable_tailscale_deployment
+    - name: Deploy pinchflat
+      ansible.builtin.include_role:
+        name: pinchflat
+      when: enable_pinchflat_deployment
