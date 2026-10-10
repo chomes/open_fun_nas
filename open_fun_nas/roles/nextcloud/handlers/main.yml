@@ -1,8 +1,4 @@
 ---
-- name: Restart nginx
-  ansible.builtin.systemd:
-    name: nginx
-    state: restarted
 - name: Force https on nextcloud
   ansible.builtin.command: docker exec nextcloud-compose php occ config:system:set overwriteprotocol --value="https"
 - name: Configure nextcloud to use proxy server

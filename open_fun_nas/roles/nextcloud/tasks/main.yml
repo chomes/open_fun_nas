@@ -49,15 +49,15 @@
 - name: Deploy proxy server config for server
   ansible.builtin.template:
     src: proxy_server_setup.j2
-    dest: /etc/nginx/sites-available/"{{ nextcloud_fqdn }}"
+    dest: "/etc/nginx/sites-available/{{ nextcloud_fqdn }}"
     owner: root
     group: root
     mode: "0644"
   when: nextcloud_proxy_server_deployment
 - name: Create soft link for new site
   ansible.builtin.file:
-    src: /etc/nginx/sites-available/"{{ nextcloud_fqdn }}"
-    dest: /etc/nginx/sites-enabled/"{{ nextcloud_fqdn }}"
+    src: "/etc/nginx/sites-available/{{ nextcloud_fqdn }}"
+    dest: "/etc/nginx/sites-enabled/{{ nextcloud_fqdn }}"
     state: link
   when: nextcloud_proxy_server_deployment
   notify:
@@ -84,15 +84,15 @@
 - name: Deploy nginx proxy config for collabora
   ansible.builtin.template:
     src: collabora_proxy_server_setup.j2
-    dest: /etc/nginx/sites-available/"{{ nextcloud_collabora_fqdn }}"
+    dest: "/etc/nginx/sites-available/{{ nextcloud_collabora_fqdn }}"
     owner: root
     group: root
     mode: "0644"
   when: nextcloud_collabora_docserver_enable and nextcloud_proxy_server_deployment
 - name: Create soft link for collabora proxy
   ansible.builtin.file:
-    src: /etc/nginx/sites-available/"{{ nextcloud_collabora_fqdn }}"
-    dest: /etc/nginx/sites-enabled/"{{ nextcloud_collabora_fqdn }}"
+    src: "/etc/nginx/sites-available/{{ nextcloud_collabora_fqdn }}"
+    dest: "/etc/nginx/sites-enabled/{{ nextcloud_collabora_fqdn }}"
     state: link
   when: nextcloud_collabora_docserver_enable and nextcloud_proxy_server_deployment
 - name: Install collabora server

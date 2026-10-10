@@ -21,3 +21,8 @@
       ansible.builtin.include_role:
         name: pinchflat
       when: enable_pinchflat_deployment
+  handlers:
+    - name: Restart nginx
+      ansible.builtin.systemd:
+        name: nginx
+        state: restarted

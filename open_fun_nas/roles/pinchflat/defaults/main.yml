@@ -2,3 +2,8 @@
 pinchflat_server_config_dir: 
 time_zone: 
 pinchflat_download_dir:
+enable_pinchflat_proxy_server: false
+pinchflat_fqdn_address:
+pinchflat_local_ip_address:
+pinchflat_ssl_certificate_path:
+pinchflat_ssl_key_path:

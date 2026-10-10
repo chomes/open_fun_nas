@@ -19,3 +19,20 @@
     state: present
     project_src: /opt/services/jellyfin
     pull: true
+- name: Deploy proxy configuration
+  ansible.builtin.template:
+    src: jellyfin_proxy_server.j2
+    dest: /etc/nginx/sites-available/"{{ jellyfin_fqdn_address }}"
+    owner: root
+    group: root
+    mode: "0755"
+  when: enable_jellyfin_proxy_server
+- name: Create soft link for jellyfin site
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/"{{ jellyfin_fqdn_address }}"
+    dest: /etc/nginx/sites-enabled/"{{ jellyfin_fqdn_address }}"
+    state: link
+  when: enable_jellyfin_proxy_server
+  notify:
+    - Restart nginx
+    

@@ -33,3 +33,19 @@
     state: present
     project_src: /opt/services/pinchflat
     pull: true
+- name: Deploy proxy service for pinchflat
+  ansible.builtin.template:
+    src: pinchflat_proxy_server.j2
+    dest: "/etc/nginx/sites-available/{{ pinchflat_fqdn_address }}"
+    owner: root
+    group: root
+    mode: "0755"
+  when: enable_pinchflat_proxy_server
+- name: Enable proxy service on nginx for pinchflat
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/{{ pinchflat_fqdn_address }}"
+    dest: "/etc/nginx/sites-enabled/{{ pinchflat_fqdn_address }}"
+    state: link
+  when: enable_pinchflat_proxy_server
+  notify:
+    - Restart nginx

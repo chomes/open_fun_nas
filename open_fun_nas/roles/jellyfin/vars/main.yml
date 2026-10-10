@@ -5,3 +5,8 @@ video_group_number: 44
 storage_dir: PROVIDE_THIS
 media_dir: PROVIDE_THIS
 enable_gpu: false
+enable_jellyfin_proxy_server: false
+jellyfin_local_ip_address:
+jellyfin_fqdn_address:
+jellyfin_ssl_certificate_path:
+jellyfin_ssl_key_path:
