@@ -1,0 +1,11 @@
+letsencrypt_certificate_name:
+letsencrypt_cloudflare_api_token:
+letsencrypt_domain_email:
+# Add a line per FQDN/Sub FQDN you want.
+# If it's just one domain only add one line
+letsencrypt_domains:
+  - FQDN
+letsencrypt_packages:
+  - certbot
+  - python3-certbot-nginx
+  - python3-certbot-dns-cloudflare

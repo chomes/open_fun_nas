@@ -1,0 +1,55 @@
+---
+- name: Install certbot packages
+  ansible.builtin.apt:
+    name: "{{ letsencrypt_packages }}"
+    state: installed
+    cache_update: true
+- name: Check existing Certbot certificates
+  ansible.builtin.command:
+    argv:
+      - certbot
+      - certificates
+  register: certbot_validation
+  changed_when: false
+  failed_when: false
+- name: Get cloudflare cert path
+  ansible.builtin.stat:
+    path: /etc/letsencrypt/cloudflare.ini
+  register: cloudflare_api_path
+- name: Redeloy cloudflare credentials if missing
+  ansible.builtin.template:
+    src: cloudflare_init.j2
+    dest: /etc/letsencrypt/cloudflare.ini
+    owner: root
+    group: root
+    mode: "0600"
+  when: not cloudflare_api_path.stat.exists
+- name: Register certificate
+  ansible.builtin.command:
+    argv: >-
+      {{
+        [
+          'certbot',
+          'certonly',
+          '--cert-name', letsencrypt_certificate_name,
+          '--email', letsencrypt_domain_email,
+          '--non-interactive',
+          '--agree-tos',
+          '--dns-cloudflare',
+          '--dns-cloudflare-credentials',
+          '/etc/letsencrypt/cloudflare.ini'
+        ]
+        + (
+          letsencrypt_domains
+          | map('regex_replace', '^(.*)$', '-d,\1')
+          | map('split', ',')
+          | flatten
+          | list
+        )
+      }}
+  when: >
+    certbot_validation.rc != 0 or
+    ('Certificate Name: ' ~ letsencrypt_certificate_name)
+    not in certbot_validation.stdout
+  notify:
+    - "Restart nginx"

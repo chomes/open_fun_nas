@@ -9,3 +9,10 @@ base_packages:
   - zfs-fuse
   - screen
   - vim
+
+base_proxy_server_enabled: false
+base_proxy_server_packages:
+  - nginx
+  - nginx-common
+  - nginx-core
+
