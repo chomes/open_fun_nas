@@ -9,6 +9,10 @@
       ansible.builtin.include_role:
         name: samba
       when: enable_samba_deployment
+    - name: Deploy letsencrypt
+      ansible.builtin.include_role:
+        name: letsencrypt
+      when: enable_letsencrypt_deployment
     - name: Deploy jellyfin
       ansible.builtin.include_role:
         name: jellyfin
